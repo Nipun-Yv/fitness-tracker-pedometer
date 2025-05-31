@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+
+import { useIsFocused } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -274,16 +276,19 @@ const CouponCard = ({ coupon, onClaim }: { coupon: Coupon; onClaim: (couponId: s
 };
 
 export default function RewardsScreen() {
+     const isFocused = useIsFocused();
   const [totalSteps, setTotalSteps] = useState(0);
   const [totalCalories, setTotalCalories] = useState(0);
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadFitnessData();
-    const interval = setInterval(loadFitnessData, 15000); // Refresh every 3 seconds
-    return () => clearInterval(interval);
-  }, []);
+    if (isFocused) {
+      console.log('Rewards screen is focused - reloading data');
+      loadFitnessData();
+    }
+  }, [isFocused]);
+
 
   const generateCoupons = (steps: number, calories: number): Coupon[] => {
     return [
